@@ -35,8 +35,8 @@ public class UserController {
     }
     @GetMapping("/login")
     @CrossOrigin
-    public UUID login(@RequestParam String username, @RequestParam String password){
-        return service.login(username,password);
+    public UUID login(@RequestParam String username, @RequestParam String password,@RequestParam String role){
+        return service.login(username,password,role);
     }
     @GetMapping("/impersonate")
     @CrossOrigin

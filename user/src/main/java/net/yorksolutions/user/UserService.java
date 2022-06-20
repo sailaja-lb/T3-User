@@ -70,14 +70,23 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
-    public UUID login(String username, String password) {
-        var result = repository.findByUsernameAndPassword(username, password);
-        if (result.isEmpty())
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        final UUID token = UUID.randomUUID();
-        tokenMap.put(token, result.get().id);
-        return token;
-    }
+//    public UUID login(String username, String password) {
+//        var result = repository.findByUsernameAndPassword(username, password);
+//        if (result.isEmpty())
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        final UUID token = UUID.randomUUID();
+//        tokenMap.put(token, result.get().id);
+//        return token;
+//    }
+public UUID login(String username, String password,String role) {
+    var result = repository.findByUsernameAndPasswordAndRole(username, password,role);
+    if (result.isEmpty())
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    final UUID token = UUID.randomUUID();
+    tokenMap.put(token, result.get().id);
+    return token;
+}
+
     public UUID loginAsUser(String username) {
         var result = repository.findByUsername(username);
         if (result.isEmpty())
