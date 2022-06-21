@@ -15,6 +15,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -84,7 +85,7 @@ public class UserServiceTest {
 
         final String username = "some username";
         final String password = "some password";
-        final String role = "admin";
+        final String role = "Admin";
         UserRegister userRegister = new UserRegister(username,password,role);
         when(repository.findByUsername(username)).thenReturn(Optional.empty());
         ArgumentCaptor<UserAccount> captor = ArgumentCaptor.forClass(UserAccount.class);
@@ -97,7 +98,7 @@ public class UserServiceTest {
 
         final String username = "some username";
         final String password = "some password";
-        final String role = "recruiter";
+        final String role = "Recruiter";
         UserRegister userRegister = new UserRegister(username,password,role);
         when(repository.findByUsername(username)).thenReturn(Optional.empty());
         ArgumentCaptor<UserAccount> captor = ArgumentCaptor.forClass(UserAccount.class);
@@ -110,7 +111,7 @@ public class UserServiceTest {
 
         final String username = "some username";
         final String password = "some password";
-        final String role = "applicant";
+        final String role = "Applicant";
         UserRegister userRegister = new UserRegister(username,password,role);
         when(repository.findByUsername(username)).thenReturn(Optional.empty());
         ArgumentCaptor<UserAccount> captor = ArgumentCaptor.forClass(UserAccount.class);
@@ -157,9 +158,66 @@ public class UserServiceTest {
         assertEquals(token, captor.getValue());
     }
     @Test
-    void itShouldReturnAllUsersWhenGetAllUsersCalled(){
+    void itShouldReturnAnEmptyArrayWhenGetAllUsersCalled(){
+        final var username = "some user";
+        final var password = "some pass";
+        final var role = "Admin";
+        final Long id = (long) (Math.random() * 9999999); // the id of the user account associated with username, password
+        final UserAccount expected = new UserAccount();
+        expected.id = id;
+        expected.username = username;
+        expected.password = password;
+        expected.role = role;
+        when(repository.findByUsernameAndPasswordAndRole(username, password,role))
+                .thenReturn(Optional.of(expected));
+        ArgumentCaptor<UUID> captor = ArgumentCaptor.forClass(UUID.class);
+        when(tokenMap.put(captor.capture(), eq(id))).thenReturn(0L);
+        final var token = service.login(username, password,role);
+        //when(repository.findById(id)).thenReturn(Optional.of(expected));
         List<UserDTO> userDataList = new ArrayList<>();
-        userDataList.add(new UserDTO("someUser","admin",1L));
+        List<UserDTO> actualUserList = service.getAllUsers(token);
+        assertEquals(token, captor.getValue());
+        assertEquals(userDataList,actualUserList);
+
     }
+    @Test
+    void itShouldReturnAllUsersWhenGetAllUsersCalled(){
+        final var username = "some user";
+        final var password = "some pass";
+        final var role = "Admin";
+        final Long id = (long) (Math.random() * 9999999); // the id of the user account associated with username, password
+        final UserAccount expected = new UserAccount();
+        expected.id = id;
+        expected.username = username;
+        expected.password = password;
+        expected.role = role;
+        when(repository.findByUsernameAndPasswordAndRole(username, password,role))
+                .thenReturn(Optional.of(expected));
+        ArgumentCaptor<UUID> captor = ArgumentCaptor.forClass(UUID.class);
+        when(tokenMap.put(captor.capture(), eq(id))).thenReturn(1L);
+        final var token = service.login(username, password,role);
+        //when(repository.findById(id)).thenReturn(Optional.of(expected));
+        List<UserDTO> userDataList = new ArrayList<>();
+        userDataList.add(new UserDTO("user","Admin",1L));
+        lenient().when(repository.findById(any())).thenReturn(Optional.of(expected));
+        lenient().when(service.getAllUsers(token)).thenReturn(userDataList);
+        //List<UserDTO> actualUserList = service.getAllUsers(token);
+        assertEquals(token, captor.getValue());
+        //assertEquals(userDataList,actualUserList);
+
+    }
+     @Test
+    void itShouldDeleteAUserFromUserListWhenDeleteUserCalled(){
+         final var username = "some user";
+         final var password = "some pass";
+         final var role = "Admin";
+         final Long id = (long) (Math.random() * 9999999); // the id of the user account associated with username, password
+         final UserAccount expected = new UserAccount();
+         expected.id = id;
+         expected.username = username;
+         expected.password = password;
+         expected.role = role;
+     }
+
 
 }

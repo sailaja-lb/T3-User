@@ -58,7 +58,7 @@ public class UserController {
     }
     @DeleteMapping("/deleteUser")
     @CrossOrigin
-    public void deleteUser(@RequestParam UUID token, @RequestParam Long id){
-        service.deleteUser(token,id);
+    public void deleteUser(@RequestParam UUID token){
+        service.deleteUser(token);
     }
 }

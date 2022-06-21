@@ -32,7 +32,7 @@ public class UserService {
 
             //Optional<UserAccount> userAccount = repository.findById(userId);
 
-                if (userAccountRole.equals("admin")) {
+                if (userAccountRole.equals("Admin")) {
                     repository.save(new UserAccount(userRegister));
                 } else {
                     throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -48,7 +48,7 @@ public class UserService {
 
         //Optional<UserAccount> userAccount = repository.findById(userId);
 
-        if (userAccountRole.equals("recruiter")) {
+        if (userAccountRole.equals("Recruiter")) {
             repository.save(new UserAccount(userRegister));
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -64,7 +64,7 @@ public class UserService {
 
         //Optional<UserAccount> userAccount = repository.findById(userId);
 
-        if (userAccountRole.equals("applicant")) {
+        if (userAccountRole.equals("Applicant")) {
             repository.save(new UserAccount(userRegister));
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -96,12 +96,11 @@ public UUID login(String username, String password,String role) {
         return token;
     }
     public List<UserDTO> getAllUsers(UUID token) {
-
         List<UserDTO> userDataList = new ArrayList<>();
         Long userId = tokenMap.get(token);
         Optional<UserAccount> userAccountId = repository.findById(userId);
         if(userAccountId.isPresent()) {
-            if (userAccountId.get().getRole().equals("admin")) {
+            if (userAccountId.get().getRole().equals("Admin")) {
                 List<UserAccount> userAccountsList = repository.findAll();
                 for (UserAccount userAccount : userAccountsList) {
                     userDataList.add(new UserDTO(userAccount.getUsername(),userAccount.getRole(),userAccount.getId()));
@@ -110,13 +109,13 @@ public UUID login(String username, String password,String role) {
         }
         return userDataList;
     }
-    public void deleteUser(UUID token, Long id) {
+    public void deleteUser(UUID token) {
         Long userId = tokenMap.get(token);
         Optional<UserAccount> userAccount = repository.findById(userId);
         if (userAccount.isPresent()) {
-            if (userAccount.get().getRole().equals("admin")) {
+            if (userAccount.get().getRole().equals("Admin")) {
 
-                repository.deleteById(id);
+                repository.deleteById(userId);
             }
 
         }
@@ -125,7 +124,7 @@ public UUID login(String username, String password,String role) {
     public UserDTO updateRole(UUID token,Long id,String role){
         Long userId = tokenMap.get(token);
         Optional<UserAccount> userAccount = repository.findById(userId);
-        if (userAccount.get().getRole().equals("admin")){
+        if (userAccount.get().getRole().equals("Admin")){
             return updateRole(id, role);
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
