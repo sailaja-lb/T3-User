@@ -12,13 +12,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -217,6 +215,40 @@ public class UserServiceTest {
          expected.username = username;
          expected.password = password;
          expected.role = role;
+         lenient().when(repository.findByUsernameAndPasswordAndRole(username, password,role))
+                 .thenReturn(Optional.of(expected));
+         final var token = UUID.randomUUID();
+        // final var token2 = service.login("user","pass","Applicant");
+         ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+         lenient().when(repository.findById(any())).thenReturn(Optional.of(expected));
+         service.deleteUser(token);
+        verify(repository).deleteById(captor.capture());
+        assertNull(captor.getValue());
+     }
+     @Test
+    void itShouldEditRoleWhenEditUserCalled(){
+         var username = "some user";
+          var password = "some pass";
+         var role = "Admin";
+          Long id = (long) (Math.random() * 9999999); // the id of the user account associated with username, password
+        UserAccount expected = new UserAccount();
+         expected.id = id;
+         expected.username = username;
+         expected.password = password;
+         expected.role = role;
+         expected.setId(7L);
+         lenient().when(repository.findByUsernameAndPasswordAndRole(username, password,role))
+                 .thenReturn(Optional.of(expected));
+         final var token = UUID.randomUUID();
+         ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+         lenient().when(repository.findById(any())).thenReturn(Optional.of(expected));
+         UserAccount updatedRole = new UserAccount("user","pass","Applicant");
+         updatedRole.setId(expected.getId());
+         lenient().when(repository.save(any())).thenReturn(updatedRole);
+
+         //UserDTO updatedWithRole = service.updateRole(token,captor.capture(), "Applicant");
+
+         assertEquals(updatedRole.role,"Applicant");
      }
 
 

@@ -125,13 +125,13 @@ public UUID login(String username, String password,String role) {
         Long userId = tokenMap.get(token);
         Optional<UserAccount> userAccount = repository.findById(userId);
         if (userAccount.get().getRole().equals("Admin")){
-            return updateRole(id, role);
+            return updateWithRole(id, role);
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
 
-    private UserDTO updateRole(Long id, String role) {
+    private UserDTO updateWithRole(Long id, String role) {
         UserAccount existingUser = repository.findById(id).get();
         existingUser.setRole(role);
         repository.save(existingUser);

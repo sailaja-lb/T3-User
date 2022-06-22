@@ -61,4 +61,8 @@ public class UserController {
     public void deleteUser(@RequestParam UUID token){
         service.deleteUser(token);
     }
+    public void setService(UserService service) {
+
+        this.service = service;
+    }
 }
