@@ -145,30 +145,44 @@ class UserControllerTests {
         final UUID token = UUID.randomUUID();
         String url = "http://localhost:" + port + "/user/getAll?token=" + token;
         ArrayList<UserDTO> userList = new ArrayList<>();
-        userList.add(new UserDTO("user", "Applicant", 10L));
+        //userList.add(new UserDTO("user", "Applicant", 10L));
         when(service.getAllUsers(token)).thenReturn(userList);
         final ResponseEntity<ArrayList> response = rest.getForEntity(url, ArrayList.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        //assertTrue(userList.equals(response.getBody()));
-        // assertEquals(userList, response.getBody());
+       // assertTrue(userList.equals(response.getBody()));
+         assertEquals(userList, response.getBody());
     }
 
-//    @Test
-//    void itShouldEditUserRoleWhenEditUserApplied() {
-//        final TestRestTemplate rest = new TestRestTemplate();
-//        final UUID token = UUID.randomUUID();
-//        final Long id = (long) (Math.random() * 9999999);
-//        final String role = "Recruiter";
-//        UserDTO userDTO = new UserDTO("token",role,id);
-//        String url = "http://localhost:" + port + "/user/editUser?token=" + token + "&id=" + id + "&role=" + role;
-//        when(service.updateRole(token,eq(id),eq("Recruiter"))).thenReturn(userDTO);
-//        final ResponseEntity<UserDTO> response = rest.exchange(url, HttpMethod.PUT,new HttpEntity<>(userDTO),UserDTO.class);
-//        assertEquals(HttpStatus.OK,response.getStatusCode());
-//        //assertEquals();
-//    }
-//    @Test
-//    void itShouldDeleteAUser(){
-//        ArgumentCaptor<UUID> token = ArgumentCaptor.forClass(UUID.class);
-//
-//    }
+    @Test
+    void itShouldEditUserRoleWhenEditUserApplied() {
+        final TestRestTemplate rest = new TestRestTemplate();
+        final UUID token = UUID.randomUUID();
+        final Long id = (long) (Math.random() * 9999999);
+        final String role = "Recruiter";
+        UserDTO userDTO = new UserDTO("token",role,id);
+        String url = "http://localhost:" + port + "/user/editUser?token=" + token + "&id=" + id + "&role=" + role;
+        HttpEntity<UserDTO> request = new HttpEntity<>(new UserDTO());
+        when(service.updateRole(token,id,role)).thenReturn(userDTO);
+        //when(service.updateRole(token,eq(id),eq("Recruiter"))).thenReturn(userDTO);
+        final ResponseEntity<UserDTO> response = rest.exchange(url, HttpMethod.PUT,request,UserDTO.class);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        //assertEquals();
+    }
+    @Test
+    void itShouldDeleteAUserAndReturnTheUserList(){
+        final TestRestTemplate rest = new TestRestTemplate();
+        final UUID token = UUID.randomUUID();
+        final Long id = (long) (Math.random() * 9999999);
+        final String role = "Recruiter";
+        List<UserDTO> resolve = service.getAllUsers(token);
+        List<UserDTO> userDTO = new ArrayList<>();
+       // userDTO.add(new UserDTO("token",role,id));
+        String url ="http://localhost:" + port + "/user/deleteUser?token=" + token + "&id=" + id;
+       //rest.delete(url);
+       when(service.getAllUsers(token)).thenReturn(userDTO);
+        HttpEntity<UserDTO> request = new HttpEntity<>(new UserDTO());
+        final ResponseEntity<Void> response = rest.exchange(url, HttpMethod.DELETE,request,Void.class);
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(resolve,userDTO);
+    }
 }

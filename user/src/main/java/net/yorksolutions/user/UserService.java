@@ -100,24 +100,25 @@ public UUID login(String username, String password,String role) {
         Long userId = tokenMap.get(token);
         Optional<UserAccount> userAccountId = repository.findById(userId);
         if(userAccountId.isPresent()) {
-            if (userAccountId.get().getRole().equals("Admin")) {
+           // if (userAccountId.get().getRole().equals("Admin")) {
                 List<UserAccount> userAccountsList = repository.findAll();
                 for (UserAccount userAccount : userAccountsList) {
                     userDataList.add(new UserDTO(userAccount.getUsername(),userAccount.getRole(),userAccount.getId()));
                 }
-            }
+           // }
         }
         return userDataList;
     }
-    public void deleteUser(UUID token) {
+    public void deleteUser(UUID token,Long id) {
         Long userId = tokenMap.get(token);
         Optional<UserAccount> userAccount = repository.findById(userId);
         if (userAccount.isPresent()) {
             if (userAccount.get().getRole().equals("Admin")) {
-
-                repository.deleteById(userId);
+                Optional<UserAccount> user = repository.findById(id);
+                if (user.isPresent()) {
+                    repository.deleteById(id);
+                }
             }
-
         }
     }
 

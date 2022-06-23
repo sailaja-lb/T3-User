@@ -201,7 +201,7 @@ public class UserServiceTest {
         lenient().when(service.getAllUsers(token)).thenReturn(userDataList);
         //List<UserDTO> actualUserList = service.getAllUsers(token);
         assertEquals(token, captor.getValue());
-        //assertEquals(userDataList,actualUserList);
+       // assertEquals(userDataList,actualUserList);
 
     }
      @Test
@@ -219,11 +219,14 @@ public class UserServiceTest {
                  .thenReturn(Optional.of(expected));
          final var token = UUID.randomUUID();
         // final var token2 = service.login("user","pass","Applicant");
-         ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+
          lenient().when(repository.findById(any())).thenReturn(Optional.of(expected));
-         service.deleteUser(token);
-        verify(repository).deleteById(captor.capture());
-        assertNull(captor.getValue());
+         doNothing().when(repository).deleteById(id);
+         service.deleteUser(token,id);
+         verify(repository).deleteById(id);
+
+
+
      }
      @Test
     void itShouldEditRoleWhenEditUserCalled(){

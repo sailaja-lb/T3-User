@@ -55,11 +55,14 @@ public class UserController {
     @CrossOrigin
     public UserDTO updateRole(@RequestParam UUID token,@RequestParam Long id,@RequestParam String role){
         return service.updateRole(token,id,role);
+
     }
     @DeleteMapping("/deleteUser")
     @CrossOrigin
-    public void deleteUser(@RequestParam UUID token){
-        service.deleteUser(token);
+    public List<UserDTO> deleteUser(@RequestParam UUID token,@RequestParam Long id)
+    {
+        service.deleteUser(token,id);
+        return service.getAllUsers(token);
     }
     public void setService(UserService service) {
 

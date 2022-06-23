@@ -24,6 +24,10 @@ public class UserDTO {
         this.role = userAccount.getRole();
     }
 
+    public UserDTO() {
+
+    }
+
     public String getUsername() {
         return username;
     }
