@@ -23,8 +23,12 @@ public class UserService {
         this.tokenMap = tokenMap;
     }
     public void registerAdmin(UserRegister userRegister) {
-        if (repository.findByUsername(userRegister.getUsername()).isPresent())
+        var result = repository.findByUsernameAndPasswordAndRole(userRegister.getUsername(), userRegister.getPassword(), userRegister.getRole());
+        if(result.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+//        if (repository.findByUsername(userRegister.getUsername()).isPresent())
+//            throw new ResponseStatusException(HttpStatus.CONFLICT);
 //        if(!(userRegister.getRole()).equals("admin"))
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
@@ -39,8 +43,12 @@ public class UserService {
                 }
             }
     public void registerRecruiter(UserRegister userRegister) {
-        if (repository.findByUsername(userRegister.getUsername()).isPresent())
+//        if (repository.findByUsernameAndPasswordAndRole(((userRegister.getUsername()).isPresent() ) &&
+//                ((userRegister.getPassword()).isPresent
+        var result = repository.findByUsernameAndPasswordAndRole(userRegister.getUsername(), userRegister.getPassword(), userRegister.getRole());
+        if(result.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
 //        if(!(userRegister.getRole()).equals("admin"))
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
@@ -55,8 +63,11 @@ public class UserService {
         }
     }
     public void registerApplicant(UserRegister userRegister) {
-        if (repository.findByUsername(userRegister.getUsername()).isPresent())
+//        if (repository.findByUsername(userRegister.getUsername()).isPresent())
+        var result = repository.findByUsernameAndPasswordAndRole(userRegister.getUsername(), userRegister.getPassword(), userRegister.getRole());
+        if(result.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
 //        if(!(userRegister.getRole()).equals("admin"))
 //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
@@ -70,14 +81,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }
-//    public UUID login(String username, String password) {
-//        var result = repository.findByUsernameAndPassword(username, password);
-//        if (result.isEmpty())
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        final UUID token = UUID.randomUUID();
-//        tokenMap.put(token, result.get().id);
-//        return token;
-//    }
+
 public UUID login(String username, String password,String role) {
     var result = repository.findByUsernameAndPasswordAndRole(username, password,role);
     if (result.isEmpty())
@@ -135,6 +139,10 @@ public UUID login(String username, String password,String role) {
     private UserDTO updateWithRole(Long id, String role) {
         UserAccount existingUser = repository.findById(id).get();
         existingUser.setRole(role);
+        var result = repository.findByUsernameAndPasswordAndRole(existingUser.getUsername(), existingUser.getPassword(), existingUser.getRole());
+        if(result.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
         repository.save(existingUser);
         return new UserDTO(repository.findById(id).get());
     }

@@ -98,7 +98,7 @@ public class UserServiceTest {
         final String password = "some password";
         final String role = "Recruiter";
         UserRegister userRegister = new UserRegister(username,password,role);
-        when(repository.findByUsername(username)).thenReturn(Optional.empty());
+       // when(repository.findByUsername(username)).thenReturn(Optional.empty());
         ArgumentCaptor<UserAccount> captor = ArgumentCaptor.forClass(UserAccount.class);
         when(repository.save(captor.capture())).thenReturn(new UserAccount(userRegister));
         Assertions.assertDoesNotThrow(() -> service.registerRecruiter(userRegister));
@@ -111,7 +111,7 @@ public class UserServiceTest {
         final String password = "some password";
         final String role = "Applicant";
         UserRegister userRegister = new UserRegister(username,password,role);
-        when(repository.findByUsername(username)).thenReturn(Optional.empty());
+        //when(repository.findByUsername(username)).thenReturn(Optional.empty());
         ArgumentCaptor<UserAccount> captor = ArgumentCaptor.forClass(UserAccount.class);
         when(repository.save(captor.capture())).thenReturn(new UserAccount(userRegister));
         Assertions.assertDoesNotThrow(() -> service.registerApplicant(userRegister));
@@ -128,16 +128,20 @@ public class UserServiceTest {
     @Test
     void itShouldReturnInvalidIfRecruiterUsernameExists() {
         final String username = "some username";
-        UserRegister userRegister = new UserRegister(username,"","");
-        when(repository.findByUsername(username)).thenReturn(Optional.of(
+        final String password = "some Password";
+        final String role = "some role";
+        UserRegister userRegister = new UserRegister(username,password,role);
+        when(repository.findByUsernameAndPasswordAndRole(username,password,role)).thenReturn(Optional.of(
                 new UserAccount()));
         assertThrows(ResponseStatusException.class, () -> service.registerRecruiter(userRegister));
     }
     @Test
     void itShouldReturnInvalidIfApplicantUsernameExists() {
         final String username = "some username";
-        UserRegister userRegister = new UserRegister(username,"","");
-        when(repository.findByUsername(username)).thenReturn(Optional.of(
+        final String password = "some Password";
+        final String role = "some role";
+        UserRegister userRegister = new UserRegister(username,password,role);
+        when(repository.findByUsernameAndPasswordAndRole(username,password,role)).thenReturn(Optional.of(
                 new UserAccount()));
         assertThrows(ResponseStatusException.class, () -> service.registerApplicant(userRegister));
     }
