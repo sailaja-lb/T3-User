@@ -24,7 +24,7 @@ public class UserService {
     }
     public void registerAdmin(UserRegister userRegister) {
         var result = repository.findByUsernameAndPasswordAndRole(userRegister.getUsername(), userRegister.getPassword(), userRegister.getRole());
-        if(result.isPresent() || result.isEmpty()) {
+        if(result.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 //        if (repository.findByUsername(userRegister.getUsername()).isPresent())
@@ -46,7 +46,7 @@ public class UserService {
 //        if (repository.findByUsernameAndPasswordAndRole(((userRegister.getUsername()).isPresent() ) &&
 //                ((userRegister.getPassword()).isPresent
         var result = repository.findByUsernameAndPasswordAndRole(userRegister.getUsername(), userRegister.getPassword(), userRegister.getRole());
-        if(result.isPresent() || result.isEmpty()) {
+        if(result.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 //        if(!(userRegister.getRole()).equals("admin"))
@@ -65,7 +65,7 @@ public class UserService {
     public void registerApplicant(UserRegister userRegister) {
 //        if (repository.findByUsername(userRegister.getUsername()).isPresent())
         var result = repository.findByUsernameAndPasswordAndRole(userRegister.getUsername(), userRegister.getPassword(), userRegister.getRole());
-        if(result.isPresent() || result.isEmpty()) {
+        if(result.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 //        if(!(userRegister.getRole()).equals("admin"))
